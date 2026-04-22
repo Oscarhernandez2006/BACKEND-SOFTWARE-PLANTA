@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: coreplanta-api
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    environment:
+      APP_NAME: COREPLANTA
+      APP_ENV: production
+      APP_DEBUG: "false"
+      APP_URL: http://localhost:8000
+      DB_CONNECTION: pgsql
+      DB_HOST: 20.121.178.90
+      DB_PORT: 5432
+      DB_DATABASE: PLANTA_DB
+      DB_USERNAME: SVRADMIN
+      DB_PASSWORD: "3.1416.asD*"
+      SESSION_DRIVER: database
+      BCRYPT_ROUNDS: 12
+    volumes:
+      - app-storage:/var/www/html/storage
+    networks:
+      - coreplanta-net
+
+volumes:
+  app-storage:
+
+networks:
+  coreplanta-net:
+    driver: bridge
