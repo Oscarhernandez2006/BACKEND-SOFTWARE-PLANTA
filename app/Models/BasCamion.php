@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BasCamion extends Model
 {
@@ -36,5 +37,10 @@ class BasCamion extends Model
             'bas_camion_peso_neto' => 'decimal:2',
             'bas_camion_peso_promedio' => 'decimal:2',
         ];
+    }
+
+    public function pies(): HasMany
+    {
+        return $this->hasMany(BasPie::class, 'bas_camion_id_registro', 'bas_camion_id_registro');
     }
 }

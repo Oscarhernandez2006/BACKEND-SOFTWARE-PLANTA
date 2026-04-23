@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BasCamionController;
+use App\Http\Controllers\Api\BasPieController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -45,4 +46,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/bas-camion', [BasCamionController::class, 'index']);
     Route::get('/bas-camion/{id}', [BasCamionController::class, 'show']);
     Route::post('/bas-camion', [BasCamionController::class, 'store']);
+
+    // Báscula / Pesaje en Pie
+    Route::get('/bas-pie', [BasPieController::class, 'index']);
+    Route::get('/bas-pie/{id}', [BasPieController::class, 'show']);
+    Route::post('/bas-pie', [BasPieController::class, 'store']);
 });

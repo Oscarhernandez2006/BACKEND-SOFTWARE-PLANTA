@@ -1,0 +1,165 @@
+================================================================================
+  COREPLANTA — API ENDPOINTS (Backend Laravel)
+  Base URL: http://localhost:8000/api
+================================================================================
+
+Todas las rutas protegidas requieren el header:
+  Authorization: Bearer {token}
+  Accept: application/json
+
+Para las rutas POST/PUT agregar también:
+  Content-Type: application/json
+
+
+================================================================================
+  1. AUTENTICACIÓN (Públicas - No requieren token)
+================================================================================
+
+POST /api/auth/login
+  Descripción: Iniciar sesión
+  Body: { "cedula": "1044616409", "password": "Admin2026*" }
+  Respuesta 200: { "token": "...", "user": { ... } }
+  Respuesta 401: { "message": "Credenciales incorrectas" }
+
+POST /api/auth/register
+  Descripción: Registrar nuevo usuario
+  Body: { "name": "...", "cedula": "...", "password": "...", "password_confirmation": "..." }
+  Respuesta 201: { "token": "...", "user": { ... } }
+
+
+================================================================================
+  2. SESIÓN (Protegidas)
+================================================================================
+
+POST /api/auth/logout
+  Descripción: Cerrar sesión actual
+
+POST /api/auth/logout-all
+  Descripción: Cerrar todas las sesiones
+
+POST /api/auth/refresh-token
+  Descripción: Renovar token
+
+POST /api/auth/change-password
+  Body: { "current_password": "...", "password": "...", "password_confirmation": "..." }
+
+POST /api/auth/reset-password  (Solo admin)
+  Body: { "cedula": "...", "password": "...", "password_confirmation": "..." }
+
+
+================================================================================
+  3. USUARIO (Protegidas)
+================================================================================
+
+GET /api/user
+  Descripción: Datos del usuario autenticado
+
+PUT /api/user/profile
+  Body: { "name": "Nuevo Nombre" }
+
+GET /api/user/login-history
+  Query: ?per_page=15
+
+GET /api/admin/login-history  (Solo admin)
+  Query: ?per_page=15
+
+
+================================================================================
+  4. BÁSCULA / CAMIONES (Protegidas)
+================================================================================
+
+GET /api/bas-camion
+  Descripción: Listar registros de camiones (paginado)
+  Query params opcionales:
+    ?per_page=15
+    ?fecha_desde=2026-01-01
+    ?fecha_hasta=2026-12-31
+    ?placa=ABC
+
+GET /api/bas-camion/{id}
+  Descripción: Obtener un registro de camión por ID
+
+POST /api/bas-camion
+  Descripción: Crear registro de camión (TODOS obligatorios)
+  Body:
+  {
+    "bas_camion_fecha_movilizacion": "2026-04-22 08:30:00",
+    "bas_camion_guia_movilizacion": "GM-001234",
+    "bas_camion_lugar_procedencia": "Montería, Córdoba",
+    "bas_camion_ganado_proveedor": "Finca El Porvenir",
+    "bas_camion_ganado_cliente": "Frigorífico del Norte",
+    "bas_camion_placa_vehiculo": "ABC123",
+    "bas_camion_conductor_nombre": "Juan Pérez",
+    "bas_camion_referencia": 1001,
+    "bas_camion_cantidad_lote": 25,
+    "bas_camion_peso_entrada": 12500.50,
+    "bas_camion_peso_salida": 4200.00,
+    "bas_camion_peso_neto": 8300.50,
+    "bas_camion_peso_promedio": 332.02
+  }
+  Respuesta 201: { "message": "Registro creado exitosamente", "data": { ... } }
+  Respuesta 422: Errores de validación en español
+
+
+================================================================================
+  5. BÁSCULA / PESAJE EN PIE (Protegidas)
+     Referenciada a bas_camion (FK: bas_camion_id_registro)
+================================================================================
+
+GET /api/bas-pie
+  Descripción: Listar registros de pesaje en pie (paginado, incluye datos del camión)
+  Query params opcionales:
+    ?per_page=15
+    ?camion_id=1              (filtrar por camión)
+    ?fecha_desde=2026-01-01
+    ?fecha_hasta=2026-12-31
+    ?tipo_animal=bovino
+    ?guia=GM-001
+
+GET /api/bas-pie/{id}
+  Descripción: Obtener un registro de pesaje por ID (incluye datos del camión)
+
+POST /api/bas-pie
+  Descripción: Crear registro de pesaje en pie
+  Body (todos obligatorios excepto observaciones):
+  {
+    "bas_camion_id_registro": 1,
+    "bas_pie_fecha_movilizacion": "2026-04-22",
+    "bas_pie_guia_movilizacion": "GM-001234",
+    "bas_pie_ganado_proveedor": "Finca El Porvenir",
+    "bas_pie_ganado_cliente": "Frigorífico del Norte",
+    "bas_pie_tipo_animal": "Bovino",
+    "bas_pie_ubicacion_corral": "Corral A-1",
+    "bas_pie_lote_animales": 25,
+    "bas_pie_numero_consecutivo_animal": 1,
+    "bas_pie_peso_animal": 450.500,
+    "bas_pie_observaciones": "Animal en buen estado"
+  }
+  Respuesta 201: { "message": "Registro creado exitosamente", "data": { ..., "camion": { ... } } }
+  Respuesta 422: Errores de validación en español
+
+  Mensajes de validación:
+    - Camión             → "El campo Camión es obligatorio" / "El Camión seleccionado no existe"
+    - Fecha movilización → "El campo Fecha de movilización es obligatorio"
+    - Guía movilización  → "El campo Guía de movilización es obligatorio"
+    - Proveedor ganado   → "El campo Proveedor de ganado es obligatorio"
+    - Cliente ganado     → "El campo Cliente de ganado es obligatorio"
+    - Tipo animal        → "El campo Tipo de animal es obligatorio"
+    - Ubicación corral   → "El campo Ubicación del corral es obligatorio"
+    - Lote animales      → "El campo Lote de animales es obligatorio"
+    - Nº consecutivo     → "El campo Número consecutivo del animal es obligatorio"
+    - Peso animal        → "El campo Peso del animal es obligatorio"
+    - Observaciones      → Opcional (máx 500 caracteres)
+
+
+================================================================================
+  CÓDIGOS DE RESPUESTA HTTP
+================================================================================
+  200  → Operación exitosa
+  201  → Recurso creado exitosamente
+  401  → No autenticado
+  403  → No autorizado (rol insuficiente)
+  404  → Recurso no encontrado
+  422  → Error de validación
+  500  → Error interno del servidor
+================================================================================
