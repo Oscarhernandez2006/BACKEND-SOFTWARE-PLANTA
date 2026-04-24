@@ -153,6 +153,55 @@ POST /api/bas-pie
 
 
 ================================================================================
+  6. ORDEN DE INGRESO MATERIA PRIMA (Protegidas)
+================================================================================
+
+GET /api/orden-ingreso-mp
+  Descripción: Listar órdenes de ingreso (paginado)
+  Query params opcionales:
+    ?per_page=15
+    ?estado=pendiente
+    ?cliente=Frigorífico
+    ?tipo_proceso=sacrificio
+    ?fecha_desde=2026-01-01
+    ?fecha_hasta=2026-12-31
+    ?numero_orden=1001
+
+GET /api/orden-ingreso-mp/{id}
+  Descripción: Obtener una orden por ID
+
+POST /api/orden-ingreso-mp
+  Descripción: Crear una nueva orden (TODOS obligatorios)
+  Body:
+  {
+    "orden_ingreso_mp_numero_orden": 1001,
+    "orden_ingreso_mp_tipo_proceso": "Sacrificio",
+    "orden_ingreso_mp_fecha_sacrificio": "2026-04-24",
+    "orden_ingreso_mp_fecha_proceso": "2026-04-24",
+    "orden_ingreso_mp_nombre_cliente": "Frigorífico del Norte",
+    "orden_ingreso_mp_estado_orden": "Pendiente"
+  }
+  Respuesta 201: { "message": "Orden creada exitosamente", "data": { ... } }
+  Respuesta 422: Errores de validación en español
+
+PATCH /api/orden-ingreso-mp/{id}/estado
+  Descripción: Cambiar el estado de una orden
+  Body:
+  {
+    "orden_ingreso_mp_estado_orden": "Completada"
+  }
+  Respuesta 200: { "message": "Estado actualizado exitosamente", "data": { ... } }
+
+  Mensajes de validación:
+    - Número de orden     → "El campo Número de orden es obligatorio" / "El Número de orden ya existe"
+    - Tipo de proceso     → "El campo Tipo de proceso es obligatorio"
+    - Fecha sacrificio    → "El campo Fecha de sacrificio es obligatorio"
+    - Fecha proceso       → "El campo Fecha de proceso es obligatorio"
+    - Nombre cliente      → "El campo Nombre del cliente es obligatorio"
+    - Estado orden        → "El campo Estado de la orden es obligatorio"
+
+
+================================================================================
   CÓDIGOS DE RESPUESTA HTTP
 ================================================================================
   200  → Operación exitosa

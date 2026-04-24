@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BasCamionController;
 use App\Http\Controllers\Api\BasPieController;
+use App\Http\Controllers\Api\OrdenIngresoMpController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -51,4 +52,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/bas-pie', [BasPieController::class, 'index']);
     Route::get('/bas-pie/{id}', [BasPieController::class, 'show']);
     Route::post('/bas-pie', [BasPieController::class, 'store']);
+
+    // Orden de Ingreso Materia Prima
+    Route::get('/orden-ingreso-mp', [OrdenIngresoMpController::class, 'index']);
+    Route::get('/orden-ingreso-mp/{id}', [OrdenIngresoMpController::class, 'show']);
+    Route::post('/orden-ingreso-mp', [OrdenIngresoMpController::class, 'store']);
+    Route::patch('/orden-ingreso-mp/{id}/estado', [OrdenIngresoMpController::class, 'updateEstado']);
 });
