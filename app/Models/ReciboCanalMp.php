@@ -17,6 +17,7 @@ class ReciboCanalMp extends Model
         'recibo_canal_mp_numero_guia',
         'recibo_canal_mp_lote_orden_sacrificio',
         'recibo_canal_mp_numero_identificacion',
+        'recibo_canal_mp_codigo_animal',
         'recibo_canal_mp_cavas_canales',
         'recibo_canal_mp_producto',
         'recibo_canal_mp_numero_orden',
