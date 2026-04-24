@@ -59,19 +59,24 @@ class OrdenIngresoMpController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        $request->merge([
+            'orden_ingreso_mp_tipo_proceso' => strtoupper($request->orden_ingreso_mp_tipo_proceso ?? ''),
+            'orden_ingreso_mp_estado_orden' => strtoupper($request->orden_ingreso_mp_estado_orden ?? ''),
+        ]);
+
         $validated = $request->validate([
             'orden_ingreso_mp_numero_orden'      => 'required|integer|unique:orden_ingreso_mp,orden_ingreso_mp_numero_orden',
-            'orden_ingreso_mp_tipo_proceso'      => 'required|string|max:50',
+            'orden_ingreso_mp_tipo_proceso'      => 'required|string|in:SACRIFICIO,RECIBO-CANAL,RECIBO-POSTA',
             'orden_ingreso_mp_fecha_sacrificio'   => 'required|date',
             'orden_ingreso_mp_fecha_proceso'      => 'required|date',
             'orden_ingreso_mp_nombre_cliente'     => 'required|string|max:100',
-            'orden_ingreso_mp_estado_orden'       => 'required|string|max:50',
+            'orden_ingreso_mp_estado_orden'       => 'required|string|in:ACTIVO,INACTIVO,PROCESADA',
         ], [
             'orden_ingreso_mp_numero_orden.required'  => 'El campo Número de orden es obligatorio',
             'orden_ingreso_mp_numero_orden.integer'   => 'El Número de orden debe ser un número entero',
             'orden_ingreso_mp_numero_orden.unique'    => 'El Número de orden ya existe',
             'orden_ingreso_mp_tipo_proceso.required'  => 'El campo Tipo de proceso es obligatorio',
-            'orden_ingreso_mp_tipo_proceso.max'       => 'El Tipo de proceso no puede exceder 50 caracteres',
+            'orden_ingreso_mp_tipo_proceso.in'        => 'El Tipo de proceso debe ser: SACRIFICIO, RECIBO-CANAL o RECIBO-POSTA',
             'orden_ingreso_mp_fecha_sacrificio.required' => 'El campo Fecha de sacrificio es obligatorio',
             'orden_ingreso_mp_fecha_sacrificio.date'     => 'La Fecha de sacrificio debe ser una fecha válida',
             'orden_ingreso_mp_fecha_proceso.required' => 'El campo Fecha de proceso es obligatorio',
@@ -79,7 +84,7 @@ class OrdenIngresoMpController extends Controller
             'orden_ingreso_mp_nombre_cliente.required' => 'El campo Nombre del cliente es obligatorio',
             'orden_ingreso_mp_nombre_cliente.max'      => 'El Nombre del cliente no puede exceder 100 caracteres',
             'orden_ingreso_mp_estado_orden.required'  => 'El campo Estado de la orden es obligatorio',
-            'orden_ingreso_mp_estado_orden.max'       => 'El Estado de la orden no puede exceder 50 caracteres',
+            'orden_ingreso_mp_estado_orden.in'        => 'El Estado de la orden debe ser: ACTIVO, INACTIVO o PROCESADA',
         ]);
 
         $registro = OrdenIngresoMp::create($validated);
@@ -95,11 +100,15 @@ class OrdenIngresoMpController extends Controller
      */
     public function updateEstado(Request $request, int $id): JsonResponse
     {
+        $request->merge([
+            'orden_ingreso_mp_estado_orden' => strtoupper($request->orden_ingreso_mp_estado_orden ?? ''),
+        ]);
+
         $validated = $request->validate([
-            'orden_ingreso_mp_estado_orden' => 'required|string|max:50',
+            'orden_ingreso_mp_estado_orden' => 'required|string|in:ACTIVO,INACTIVO,PROCESADA',
         ], [
             'orden_ingreso_mp_estado_orden.required' => 'El campo Estado de la orden es obligatorio',
-            'orden_ingreso_mp_estado_orden.max'      => 'El Estado de la orden no puede exceder 50 caracteres',
+            'orden_ingreso_mp_estado_orden.in'       => 'El Estado de la orden debe ser: ACTIVO, INACTIVO o PROCESADA',
         ]);
 
         $registro = OrdenIngresoMp::findOrFail($id);
