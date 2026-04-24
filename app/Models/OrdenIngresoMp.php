@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class OrdenIngresoMp extends Model
 {
@@ -25,5 +26,10 @@ class OrdenIngresoMp extends Model
             'orden_ingreso_mp_fecha_sacrificio' => 'date',
             'orden_ingreso_mp_fecha_proceso' => 'date',
         ];
+    }
+
+    public function recibosCanal(): HasMany
+    {
+        return $this->hasMany(ReciboCanalMp::class, 'orden_ingreso_mp_id_registro', 'orden_ingreso_mp_id_registro');
     }
 }

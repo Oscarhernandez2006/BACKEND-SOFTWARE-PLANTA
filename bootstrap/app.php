@@ -35,6 +35,7 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($request->expectsJson()) {
                 $modelos = [
                     'OrdenIngresoMp' => 'Orden de ingreso',
+                    'ReciboCanalMp'  => 'Recibo canal',
                     'BasCamion'      => 'Registro de camión',
                     'BasPie'         => 'Registro de pesaje en pie',
                     'User'           => 'Usuario',

@@ -202,6 +202,60 @@ PATCH /api/orden-ingreso-mp/{id}/estado
 
 
 ================================================================================
+  7. RECIBO CANAL MATERIA PRIMA (Protegidas)
+     Referenciada a orden_ingreso_mp (FK: orden_ingreso_mp_id_registro)
+     SOLO acepta órdenes con tipo_proceso = RECIBO-CANAL
+     Producto siempre es: CARNE EN CANAL (se asigna automáticamente)
+================================================================================
+
+GET /api/recibo-canal-mp
+  Descripción: Listar registros de recibo canal (paginado, incluye datos de la orden)
+  Query params opcionales:
+    ?per_page=15
+    ?orden_id=1
+    ?fecha_desde=2026-01-01
+    ?fecha_hasta=2026-12-31
+    ?cliente=Frigorífico
+    ?numero_guia=GM-001
+    ?numero_orden=1001
+
+GET /api/recibo-canal-mp/{id}
+  Descripción: Obtener un registro por ID (incluye datos de la orden)
+
+POST /api/recibo-canal-mp
+  Descripción: Crear registro de recibo canal
+  Restricción: La orden debe ser de tipo RECIBO-CANAL
+  Producto: Se asigna automáticamente "CARNE EN CANAL"
+  Body (todos obligatorios):
+  {
+    "orden_ingreso_mp_id_registro": 1,
+    "recibo_ingreso_mp_fecha_registro": "2026-04-24",
+    "recibo_ingreso_mp_nombre_cliente": "Frigorífico del Norte",
+    "recibo_canal_mp_numero_guia": "GM-001234",
+    "recibo_canal_mp_lote_orden_sacrificio": 1,
+    "recibo_canal_mp_numero_identificacion": 1001,
+    "recibo_canal_mp_cavas_canales": "CAVA-01",
+    "recibo_canal_mp_numero_orden": 1001,
+    "recibo_canal_mp_peso_canal": 250.500
+  }
+  Respuesta 201: { "message": "Registro creado exitosamente", "data": { ..., "orden": { ... } } }
+  Respuesta 422: Errores de validación en español
+
+  Mensajes de validación:
+    - Orden ingreso       → "El campo Orden de ingreso es obligatorio" / "La Orden de ingreso seleccionada no existe"
+    - Tipo orden          → "La Orden seleccionada debe ser de tipo RECIBO-CANAL"
+    - Fecha registro      → "El campo Fecha de registro es obligatorio"
+    - Nombre cliente      → "El campo Nombre del cliente es obligatorio"
+    - Número guía         → "El campo Número de guía es obligatorio"
+    - Lote sacrificio     → "El campo Lote orden de sacrificio es obligatorio"
+    - Nº identificación   → "El campo Número de identificación es obligatorio"
+    - Cavas canales       → "El campo Cavas canales es obligatorio"
+    - Producto            → "El Producto solo puede ser: CARNE EN CANAL"
+    - Número orden        → "El campo Número de orden es obligatorio"
+    - Peso canal          → "El campo Peso canal es obligatorio"
+
+
+================================================================================
   CÓDIGOS DE RESPUESTA HTTP
 ================================================================================
   200  → Operación exitosa
